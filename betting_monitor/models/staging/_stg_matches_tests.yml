@@ -1,0 +1,44 @@
+version: 2
+
+models:
+  - name: stg_matches
+    description: "Cleaned, typed match-level betting odds across four leagues."
+    columns:
+      - name: match_date
+        description: "Date the match was played."
+        tests:
+          - not_null
+
+      - name: home_team
+        description: "Home team name."
+        tests:
+          - not_null
+
+      - name: away_team
+        description: "Away team name."
+        tests:
+          - not_null
+
+      - name: full_time_result
+        description: "Full-time result: H (home win), D (draw), A (away win)."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['H', 'D', 'A']
+
+      - name: tier
+        description: "League tier classification."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['elite', 'mid_tier']
+
+      - name: league
+        description: "League code: D1, E0, T1, G1."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['D1', 'E0', 'T1', 'G1']
