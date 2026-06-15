@@ -1,4 +1,4 @@
-"""Football Betting Integrity Monitor — Streamlit presentation + dashboard.
+"""Football Betting Market Efficiency Monitor — Streamlit presentation + dashboard.
 
 Run with:  streamlit run app.py
 """
@@ -9,7 +9,7 @@ from lib.data import load_matches
 from views import overview, betting101, efficiency, hypothesis, anomaly, dashboard
 
 st.set_page_config(
-    page_title="Betting Integrity Monitor",
+    page_title="Betting Market Efficiency Monitor",
     page_icon="🎯",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -31,7 +31,7 @@ PAGES = {
 with st.sidebar:
     st.markdown(
         '<div class="brand"><div class="logo"><span></span></div>'
-        '<div class="name">Betting Integrity<br>Monitor</div></div>',
+        '<div class="name">Betting Market Efficiency <br>Monitor</div></div>',
         unsafe_allow_html=True)
     st.markdown('<div class="sidebar-label">PRESENTATION</div>',
                 unsafe_allow_html=True)

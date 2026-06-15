@@ -1,14 +1,16 @@
 import streamlit as st
 
+from lib import assets
 from lib import components as C
 from lib import theme as T
+from lib.data import LEAGUE_NAME, LEAGUE_FULL, LEAGUE_COUNTRY, TIER
 
 
 def render(df):
     C.page_header(
         "Overview",
-        "Football Betting Integrity Monitor",
-        "A market-efficiency study with anomaly screening — seven seasons of football odds.",
+        "Football Betting Market Efficiency Monitor",
+        "Can you bit bookmakers? A market-efficiency study with anomaly screening — seven seasons of football odds.",
     )
 
     c1, c2, c3 = st.columns(3)
@@ -23,31 +25,57 @@ def render(df):
 
     C.soft_divider()
 
+    st.markdown('<div class="eyebrow">Leagues analysed</div>', unsafe_allow_html=True)
+    counts = df["league"].value_counts().to_dict()
+    cols = st.columns(4)
+    for col, code in zip(cols, ["D1", "E0", "T1", "G1"]):
+        tier_cls = "tier-elite" if TIER[code] == "elite" else "tier-mid"
+        tier_lbl = "ELITE" if TIER[code] == "elite" else "MID-TIER"
+        n = counts.get(code, 0)
+        with col:
+            with C.card():
+                st.markdown(
+                    f'<div class="league-card">'
+                    f'<div class="emblem">{assets.league_emblem_html(code, 40)}</div>'
+                    f'<div class="lname">{LEAGUE_NAME[code]}</div>'
+                    f'<div class="lfull">{LEAGUE_FULL[code]} · {LEAGUE_COUNTRY[code]}</div>'
+                    f'<div class="lmeta">{n:,} matches</div>'
+                    f'<span class="tier-tag {tier_cls}">{tier_lbl}</span>'
+                    f'</div>', unsafe_allow_html=True)
+
+    C.soft_divider()
+
     st.markdown('<div class="eyebrow">Pipeline</div>', unsafe_allow_html=True)
-    st.markdown(
-        '<div class="pipe">'
-        '<span class="step">Raw CSVs</span><span class="arrow">›</span>'
-        '<span class="step">pandas</span><span class="arrow">›</span>'
-        '<span class="step">PostgreSQL</span><span class="arrow">›</span>'
-        '<span class="step">dbt</span><span class="arrow">›</span>'
-        '<span class="step">Model + App</span>'
-        '</div>', unsafe_allow_html=True)
+
+    PIPELINE = [
+        ("python", "Python", "Extract data + EDA"),
+        ("postgresql", "PostgreSQL", "Warehouse"),
+        ("dbt", "dbt", "Transformation + tests"),
+        ("python", "Python", "Modeling"),
+        ("streamlit", "Streamlit", "Presentation"),
+    ]
+    row = ['<div class="pipeline-row">']
+    for i, (key, label, sub) in enumerate(PIPELINE):
+        if i > 0:
+            row.append('<span class="pl-arrow">›</span>')
+        row.append(f'<div class="pl-step">{assets.tool_emblem_html(key, 32)}'
+                    f'<div class="pl-text"><div class="pl-label">{label}</div>'
+                    f'<div class="pl-sub">{sub}</div></div></div>')
+    row.append('</div>')
+
+    st.markdown("".join(row), unsafe_allow_html=True)
 
     st.write("")
+
     st.markdown(
-        "**Methods:** EDA → 35 engineered features → Isolation Forest → "
-        "SHAP → hypothesis testing")
-    st.markdown(
-        '<span class="chip">8,915 rows scored</span>'
-        '<span class="chip">Streamlit + Tableau</span>'
-        '<span class="chip">dbt · 9 passing tests</span>',
-        unsafe_allow_html=True)
+        "**Methods:** Data Extract → EDA → 35 engineered features → Isolation Forest → "
+        "SHAP → Hypothesis testing")
 
     C.soft_divider()
 
     left, right = st.columns([1.15, 1])
     with left:
-        with C.card("What this is — and what it is not"):
+        with st.expander("What this is — and what it is not"):
             st.markdown(
                 "This project studies how an efficient market with a built-in fee "
                 "behaves, and screens for matches whose odds behave **unlike their "
@@ -58,15 +86,13 @@ def render(df):
                 "accusation. The same way professional integrity monitors operate: "
                 "*unusual ≠ rigged.*")
     with right:
-        with C.card("The four hypotheses"):
+        with st.expander("The four hypotheses"):
+            
             st.markdown(
-                "<div class='note'>Written down before testing, so nothing is "
-                "cherry-picked after the fact.</div>", unsafe_allow_html=True)
-            st.markdown(
-                "**H1** · Smaller leagues priced less efficiently than big ones  \n"
-                "**H2** · Draws mispriced (Greece under, EPL correct)  \n"
-                "**H3** · Anomalies detectable; league-aware tuning rebalances flags  \n"
-                "**H4** · Bookmaker disagreement spikes at season's end")
+                "**H1** · Mid-tier leagues are priced less efficiently than elite leagues  \n"
+                "**H2** · Draws are systematically mispriced  \n"
+                "**H3** · Anomalous matches can be identified from odds features  \n"
+                "**H4** · Bookmaker disagreement concentrates towards the end of the season")
 
     if df["_synthetic"].iloc[0]:
         st.write("")

@@ -1,10 +1,8 @@
-# Football Betting Integrity Monitor
-
-> ⚠️ **Work in progress.** The analytical pipeline is complete (data → warehouse → features → model → hypothesis tests). Visualisation (Tableau), the Streamlit app, and final write-up are still in progress. Findings below are current results and may be refined.
+# Football Betting Market Efficiency Analysis
 
 A cross-league study of betting-market efficiency across European football, with anomaly screening as one analytical layer. Analyses **8,915 matches** across four leagues (Bundesliga, EPL, Turkey, Greece) over seven seasons (2019/20–2025/26) to measure how bookmaker pricing efficiency differs between elite and mid-tier markets — and demonstrates that anomaly-detection thresholds must be calibrated to each market's own baseline rather than applied universally.
 
-**[Tableau Dashboard](#)** (in progress) · **[Streamlit App](#)** (in progress)
+**[Tableau Dashboard](#)** · **[Streamlit App](#)**
 
 ---
 
@@ -22,24 +20,32 @@ This project first measures the efficiency differences directly, then shows that
 
 ---
 
-## Hypotheses & Results
+## Hypotheses
 
-Each hypothesis had a **pre-committed success criterion** set before testing, to prevent post-hoc storytelling. Formal tests: Kolmogorov–Smirnov, Mann–Whitney U, ANOVA.
+Four hypotheses were tested against **pre-committed success criteria** set before analysis, with **two-tier provenance labelling** (pre-registered vs EDA-informed vs exploratory) to prevent post-hoc storytelling. Formal tests: Kolmogorov–Smirnov, Mann–Whitney U, ANOVA. Throughout, "anomalous" means *statistically unusual for its market* — never "fixed." With no ground-truth labels, results are reported as **differential flagging rates**, not false-positive rates.
 
-### H1 — Mid-tier less efficiently priced than elite → **reframed, not supported as a tier claim**
-The expectation was that the two mid-tier leagues would behave as one less-efficient block. They don't: anomaly flagging concentrates in **Greece** specifically (universal flag rate 0.106), while **Turkey** sits at the *opposite* end (0.020) — the most expensive market by margin but the fewest flagged anomalies. "Mid-tier" is not one coherent group, so the honest reframe is that the signal is **Greece-specific**, not tier-wide.
+### H1 — Mid-tier leagues are priced less efficiently than elite leagues
+- **Provenance:** pre-registered
+- **Criterion:** efficiency metrics (overround, spread) differ significantly between tiers (KS / Mann–Whitney U, p < 0.05) and flagging concentrates in the mid tier.
+- **Verdict: Not supported as a tier claim — reframed to a league-level effect.** Margin and spread *are* wider in the mid tier descriptively, but anomaly flagging does not split by tier: Greece (universal flag rate 0.106) and Turkey (0.020) sit at opposite extremes — Turkey is the most expensive market by margin yet the *fewest* flagged anomalies. Within-tier league pairs also differ significantly. Efficiency varies **league-by-league, not tier-by-tier**; the signal is concentrated in Greece.
 
-### H2 — Draws systematically mispriced in specific leagues → **supported**
-Greece shows **+6.1% draw underpricing** (realised draw rate exceeds implied). EPL is the only league with a correctly-priced draw market. Extreme single-season draw spikes were flagged in Greece 22/23 and Turkey 25/26 (+4.3–4.4pp).
+### H2 — Draws are systematically mispriced
+- **Provenance:** EDA-informed (confirmatory)
+- **Criterion:** realised draw rate departs from implied, consistently across leagues.
+- **Verdict: Partially supported — mispricing is real but league-specific, not systematic.** Greece underprices draws by **+6.1%** (realised 27.2% vs implied 25.7%); EPL is correctly priced (**−0.8%**). Effect sizes are substantive, but the season-level test is **underpowered (n = 7)**, so formal significance is not reached at threshold. The honest refinement: draws are mispriced *in specific leagues*, not across the board. (Extreme single-season spikes appear in Greece 22/23 and Turkey 25/26, +4.3–4.4pp.)
 
-### H3 — Anomalies identifiable from odds features → **supported**
-Both parts held. A pooled (universal) Isolation Forest separates unusual matches; a per-league-calibrated (tier-aware) model rebalances flagging so each league converges to ~5%. The two models flag **different matches** (328 shared, 118 universal-only, 118 tier-only) — calibration changes *who* gets caught, not just how many.
+### H3 — Anomalous matches can be identified from odds features
+- **Provenance:** pre-registered
+- **Criterion:** an unsupervised model separates unusual matches, and per-league calibration balances flagging across leagues.
+- **Verdict: Supported.** A pooled (universal) Isolation Forest separates unusual matches on odds features; a per-league-calibrated (tier-aware) model rebalances flagging so each league converges to ~5%, versus the universal model's 2.0%–10.6% spread. The two models flag **different matches** (328 shared, 118 universal-only, 118 tier-only) — calibration changes *who* gets caught, not just how many. SHAP attributes the flags chiefly to spread (~0.49) and drift (~0.34). *Caveat:* "identifiable" means statistically separable, **not** proven manipulation.
 
-### H4 — Bookmaker disagreement peaks at end of season → **disproven**
-The opposite is true. Disagreement is **lowest in the final quarter** across all four leagues; Greece's spreads peak mid-season (Q3), not at the end. Markets appear to stabilise as the season closes.
+### H4 — Bookmaker disagreement concentrates toward the end of the season
+- **Provenance:** a priori directional claim → rejected → documented as an exploratory reframe
+- **Criterion:** spread/disagreement rises across season quintiles, peaking in the final quarter.
+- **Verdict: Disproven.** The opposite holds — disagreement is **lowest in the final quarter** across all four leagues, and Greece's spreads peak mid-season (Q3). Markets appear to *stabilise* as the season closes.
 
-### The thread across everything: **Greece**
-Greece is the structurally most unusual market on every independent angle — widest spreads (Pinnacle away drift 0.300, the single highest value in the dataset, 71% wider than EPL), highest anomaly flag rate (10.6%), second-largest draw-pricing gap (+6.1%), and SHAP confirms spread (~0.49) + drift (~0.34) drive ~2/3 of its anomaly score. No single finding proves wrongdoing; the *consistency across four independent angles* is what makes it stand out.
+### The thread across all four: Greece
+Each hypothesis independently points back to Greece — widest spreads and drift (Pinnacle away drift 0.300, the single highest value in the dataset, 71% wider than EPL), highest anomaly flag rate (10.6%), largest draw-pricing gap (+6.1%), and SHAP attributing ~2/3 of its anomaly score to spread (~0.49) and drift (~0.34). No single finding proves wrongdoing; the **consistency across four independent analytical angles** is the finding.
 
 ---
 
@@ -91,7 +97,7 @@ Two genuine time points per match (open and close) make line-movement a real mea
 
 Plus scale-free booleans carried into both model sets (`dir_disagree_h/d/a`, `margin_tightened`, `pinnacle_missing`) and rolling temporal features (`roll_draw_rate_z`, `roll_drift_mag_z`, 38-match window, season-boundary reset, leakage guard). `xmkt_div_abs` was excluded with cause (redundant with the public–sharp divergence features).
 
-> *Note: in code and dbt the public–sharp divergence family currently uses the column prefix `b365_vs_ps_close_*` and was labelled "CLV / cross-book"; "public–sharp divergence" is the accurate name and the documentation is being aligned to it.*
+> *Naming note: in code and dbt this family uses the column prefix `b365_vs_ps_close_*` (originally labelled "CLV / cross-book"). "Public–sharp divergence" is the accurate term — it measures the gap between the retail book (Bet365) and the sharp book (Pinnacle) at close, not textbook closing-line value, which is a time-based open-to-close measure captured here by the drift family instead.*
 
 ---
 
@@ -103,13 +109,13 @@ Built **pandas-first** (a complete, presentable analysis on its own), with the P
 football-data.co.uk CSVs
    ↓  Python (requests, pandas)          download + clean + merge → master_enriched.csv (8,915 rows)
    ↓  PostgreSQL on AWS RDS              loaded via SQLAlchemy (schema s_vladislavkivaev)
-   ↓  dbt Core (betting_monitor)         stg_matches → int_matches_with_features → mart_matches_clean
+   ↓  dbt Core (dbt/)                    stg_matches → int_matches_with_features → mart_matches_clean
    ↓  Python (scikit-learn, SHAP)        features → Isolation Forest (universal + tier-aware) → scored_matches
    ↓  scipy                              KS / Mann–Whitney U / ANOVA hypothesis tests
-   ↓  Tableau + Streamlit                dashboards + interactive risk-scorer  (in progress)
+   ↓  Tableau + Streamlit                dashboards + interactive risk-scorer
 ```
 
-**dbt models** (all build into schema `s_vladislavkivaev`, 9 data-quality tests passing, lineage DAG saved to `docs/images/dbt_lineage_graph.png`):
+**dbt models** (all build into schema `s_vladislavkivaev`, 9 data-quality tests passing, with a saved lineage DAG):
 - `stg_matches` (view) — renames mixed-case columns to snake_case, casts types, adds `is_covid_season`
 - `int_matches_with_features` (view) — adds `b365_vs_ps_close_h/d/a`, `margin_tightened`, `overround_change`, `home_shortened`, `home_win`
 - `mart_matches_clean` (table) — the notebook's read target
@@ -134,28 +140,29 @@ football-data.co.uk CSVs
 
 ```
 football-betting-integrity-monitor/
+├── dashboard/                   # Tableau workbook + Streamlit risk-scorer app
 ├── data/
 │   ├── raw/                     # Downloaded CSVs (gitignored)
 │   └── processed/               # master_enriched.csv, features.parquet, scored_matches.parquet
+|   └── figures/                 # Saved charts images
+├── dbt/                         # dbt Core project (staging → intermediate → marts)
 ├── notebooks/
-│   ├── 01_eda_clean.ipynb       # Cleaning, merge, EDA (market structure, calibration, drift)
+│   ├── 01_eda.ipynb       # Cleaning, merge, EDA (market structure, calibration, drift)
 │   ├── 02_features.ipynb        # Feature engineering — 5 families, 2 representations
 │   ├── 03_modeling.ipynb        # Isolation Forest (universal vs tier-aware) + SHAP
-│   └── 04_hypothesis_tests.ipynb# KS / Mann–Whitney U / ANOVA against pre-committed criteria
+│   └── 04_hypothesis_tests.ipynb # KS / Mann–Whitney U / ANOVA against pre-committed criteria
+|   └── 05_exploratory_flags.ipynb # Anomaly analysis
 ├── scripts/
 │   ├── load_to_rds.py           # Loads master_enriched.csv into PostgreSQL on RDS
 │   └── feature_engineering.py   # Reproducible regenerator of the feature matrix
-├── betting_monitor/             # dbt Core project (staging → intermediate → marts)
-├── docs/images/                 # dbt lineage DAG, exported charts
-├── reports/figures/             # EDA charts
-├── streamlit/                   # Interactive risk-scorer (in progress)
+|   └── download_data.py         # Download data from the source
 ├── requirements.txt
 └── README.md
 ```
 
 ---
 
-## Status
+## Status — Complete
 
 | Stage | State |
 |---|---|
@@ -164,15 +171,15 @@ football-betting-integrity-monitor/
 | Feature engineering | ✅ Done (35 features, 2 representations) |
 | Modeling (Isolation Forest + SHAP) | ✅ Done (universal vs tier-aware A/B) |
 | Hypothesis tests (KS / MWU / ANOVA) | ✅ Done (all four tested vs pre-committed criteria) |
-| Tableau dashboards | 🔄 In progress |
-| Streamlit app | 🔄 In progress |
-| Final presentation & write-up | 🔄 In progress |
+| Tableau dashboards | ✅ Done |
+| Streamlit app | ✅ Done |
+| Final presentation & write-up | ✅ Done |
 
 ---
 
 ## Limitations
 
-- **No ground-truth labels**: no confirmed list of fixed matches exists. Flagged matches are statistically unusual, not proven corrupt. The project reports *differential flagging rates*, not false-positive rates — H2/H3 verdicts are inferences supported by H1, not direct measurements.
+- **No ground-truth labels**: no confirmed list of fixed matches exists. Flagged matches are statistically unusual, not proven corrupt. The project reports *differential flagging rates*, not false-positive rates — the hypothesis verdicts are inferences about market structure, not measurements of manipulation.
 - **Tier and region are confounded**: the elite tier (Germany, England) and mid tier (Turkey, Greece) also differ by region and wealth. With two leagues per tier, a "tier" effect cannot be cleanly separated from a country effect — which is part of why H1 was reframed to a Greece-specific finding.
 - **Two time points, not continuous**: opening and closing odds are available, so open-to-close drift is real, but intra-day line movement (and true mid-window reversals) cannot be observed.
 - **Scandal cases predate the data**: the Greek (2011) and Turkish scandals motivate league selection but fall before the 2019/20 window — they justify these leagues as higher-risk markets, but specific scandal matches cannot be validated against.

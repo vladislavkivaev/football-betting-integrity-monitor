@@ -4,6 +4,7 @@ from lib import charts
 from lib import components as C
 from lib import theme as T
 from lib.data import FLAG_RATE_UNIVERSAL
+from lib.data import FLAG_RATE_TIER
 
 
 def render(df):
