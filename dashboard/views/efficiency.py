@@ -15,10 +15,10 @@ def render(df):
     )
 
     c1, c2, c3, c4 = st.columns(4)
-    C.kpi(c1, "43%", "home-win rate")
+    C.kpi(c1, "r = 0.99", "predicted vs actual")
     C.kpi(c2, "53.1%", "favourites win")
-    C.kpi(c3, "r = 0.99", "predicted vs actual", color=T.GREEN)
-    C.kpi(c4, "+1.5%", "Greece draw gap", color=T.AMBER)
+    C.kpi(c3, "64%", "Greece away spread vs EPL")
+    C.kpi(c4, "2x", "Bet365 vs Pinnacle margin")
     C.note("Headline figures above are fixed reference points (closing B365 odds, "
            "all matches). The charts below respond to the filters.")
 
@@ -57,7 +57,7 @@ def render(df):
                    for label, color, df_sub, long_sub in groups}
         st.plotly_chart(EC.result_distribution_fig(groups, results, bookmaker),
                         width="stretch", config={"displayModeBar": False})
-        C.note(f"Green bars are what actually happened, blue bars are what "
+        C.note(f"Amber bars are what actually happened, blue bars are what "
                f"{bookmaker}'s {timing.lower()} odds implied. Home advantage shows up "
                f"as the tallest bar everywhere and the market gets it right.")
 
