@@ -8,9 +8,9 @@ from lib.data import OVERROUND_B365
 ROWS = [
     ("H1", "Smaller leagues priced less efficiently than big ones",
      "Pre-registered", "Not supported", "red"),
-    ("H2", "Draws mispriced (Greece under, EPL correct)",
+    ("H2", "Draws mispriced",
      "EDA-informed", "Mixed", "amber"),
-    ("H3", "Anomalies detectable; league-aware tuning rebalances flags",
+    ("H3", "Anomalies detectable, league-aware tuning rebalances flags",
      "Pre-registered", "Supported", "green"),
     ("H4", "Bookmaker disagreement spikes at season's end",
      "Pre-registered", "Rejected", "red"),
@@ -21,7 +21,6 @@ def render(df):
     C.page_header(
         "Hypothesis Testing",
         "Four predictions, written down first",
-        "Two held, two didn't — and reporting that honestly is the point.",
     )
 
     with C.card():

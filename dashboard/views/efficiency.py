@@ -17,8 +17,8 @@ def render(df):
     c1, c2, c3, c4 = st.columns(4)
     C.kpi(c1, "r = 0.99", "predicted vs actual")
     C.kpi(c2, "53.1%", "favourites win")
-    C.kpi(c3, "64%", "Greece away spread vs EPL")
-    C.kpi(c4, "2x", "Bet365 vs Pinnacle margin")
+    C.kpi(c3, "+64%", "Greece away spread vs EPL")
+    C.kpi(c4, "~2x", "Bet365 vs Pinnacle margin")
     C.note("Headline figures above are fixed reference points (closing B365 odds, "
            "all matches). The charts below respond to the filters.")
 
@@ -114,7 +114,7 @@ def render(df):
                "books regardless of the Bookmaker filter above.")
 
     C.soft_divider()
-    with C.card("So what?"):
+    with st.expander("So what?"):
         st.markdown(
             "The market is **broadly efficient** — calibration is near-perfect and "
             "the big patterns (home advantage, favourite strength) are priced "

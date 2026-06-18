@@ -21,8 +21,8 @@ def render(df):
     C.page_header(
         "Match Dashboard",
         "Explore any game in the dataset",
-        "Filter the 8,915 matches, then open one to see why the model did — or "
-        "didn't — flag it.",
+        "Filter the 8,915 matches, then open one to see why the model did or "
+        "didn't flag it.",
     )
 
     rail, main = st.columns([1, 2.5], gap="large")
@@ -184,7 +184,7 @@ def render(df):
                        f"for this match relative to all 8,915 matches in the "
                        f"dataset — the two can disagree, since SHAP accounts for "
                        f"how the model combines features, not just each feature's "
-                       f"raw size. Either way: a screen, not a verdict.")
+                       f"raw size. ")
             else:
                 C.note("The odds for this game behaved unlike most matches in "
                        "the dataset as a whole — that's why it surfaced. A "

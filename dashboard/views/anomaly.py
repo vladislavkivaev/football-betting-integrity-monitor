@@ -23,8 +23,8 @@ def render(df):
             st.plotly_chart(charts.drift_example(), width="stretch",
                             config={"displayModeBar": False})
             C.note("The away odds jumped 2.85 → 3.60 — a big, late move. On its own "
-                   "that's nothing; combined with a wide book disagreement, the model "
-                   "treats it as a red flag worth a human look.")
+                   "that's nothing, but combined with a wide book disagreement, the model "
+                   "treats it as a red flag worth a look.")
     with top_r:
         with C.card("The signals the model watches"):
             st.markdown(
@@ -53,13 +53,13 @@ def render(df):
 
     # ---- 3. Flag rate by league: universal vs tier-aware -------------------- #
     st.write("")
-    with C.card("Flag rate by league — universal vs tier-aware model"):
+    with C.card("Flag rate by league — universal vs league-aware model"):
         st.plotly_chart(charts.flag_rate_by_league(FLAG_RATE_UNIVERSAL, FLAG_RATE_TIER),
                         width="stretch", config={"displayModeBar": False},
                         key="flag_rate_chart_1")
         C.note("The universal model (grey) over-flags Greece (10.6%) and under-flags "
                "Turkey (2.0%) — it's comparing every league to the same global bar. "
-               "Unusual is not an accusation.")
+               )
 
 
     # ---- 4. SHAP, full width ------------------------------------------------ #
@@ -72,11 +72,11 @@ def render(df):
                "other leagues — not just flagged ones. <b>Drift</b> and "
                "<b>spread</b> together account for most of the gap that makes "
                "a typical Greek match score more anomalous than a typical match "
-               "elsewhere; the other three families add texture underneath.")
+               "elsewhere. The other three families add texture underneath.")
 
     # ---- 5. Two models, one A/B test ---------------------------------------- #
     st.write("")
-    with C.card("Two models, one A/B test"):
+    with C.card("Two models"):
         cc1, cc2 = st.columns(2)
         with cc1:
             st.markdown(
@@ -99,9 +99,9 @@ def render(df):
     st.markdown(
         f"<div class='card' style='border-color:{T.AMBER}'>"
         f"<h3 style='color:{T.AMBER}'>⚖️ No ground-truth labels exist.</h3>"
-        f"<div class='muted'>So this reports <b>differential flagging rates</b> — "
-        f"never false-positive rates or claims of wrongdoing. A flag means a match's "
-        f"odds behaved unlike its league; it is a screening signal, not a verdict. "
+        f"<div class='muted'>The model reports <b>differential flagging rates</b> "
+        f"not claims of wrongdoing. A flag means a match's "
+        f"odds behaved unlike its league — it is a screening signal, not a verdict. "
         f"The honest output is \u201chere is where a human should look\u201d — the "
         f"same way real integrity monitors operate. <b>Unusual \u2260 rigged.</b>"
         f"</div></div>", unsafe_allow_html=True)

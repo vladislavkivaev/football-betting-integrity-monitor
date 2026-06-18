@@ -15,7 +15,7 @@ def render(df):
 
     c1, c2, c3 = st.columns(3)
     C.kpi(c1, "8,915", "matches analysed")
-    C.kpi(c2, "4", "leagues · Bundesliga · EPL · Turkey · Greece")
+    C.kpi(c2, "4", "leagues · Germany · England · Turkey · Greece")
     C.kpi(c3, "7", "seasons · 2019/20 – 2025/26")
 
     st.write("")
