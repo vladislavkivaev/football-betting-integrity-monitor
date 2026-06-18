@@ -28,14 +28,19 @@ def render(df):
     with top_r:
         with C.card("The signals the model watches"):
             st.markdown(
-                "**Drift** — how far open → close odds moved  \n"
-                "**Spread** — disagreement between bookmakers  \n"
-                "**Implied imbalance** — lopsided home/draw/away pricing  \n"
-                "**Public–sharp gap** — Bet365 vs Pinnacle divergence  \n"
-                "**Reversal proxy** — price moves then snaps back")
+                f"<span style='color:{T.BLUE};font-weight:700'>Drift</span><br>"
+                f"<span style='color:{T.MUTED}'>how far open → close odds moved</span>  <br><br>"
+                f"<span style='color:{T.BLUE};font-weight:700'>Spread</span><br>"
+                f"<span style='color:{T.MUTED}'>disagreement between bookmakers</span>  <br><br>"
+                f"<span style='color:{T.BLUE};font-weight:700'>Margin deviation</span><br>"
+                f"<span style='color:{T.MUTED}'>the book margin vs typical margin</span>  <br><br>"
+                f"<span style='color:{T.BLUE};font-weight:700'>Public–sharp gap</span><br>"
+                f"<span style='color:{T.MUTED}'>Bet365 vs Pinnacle variance</span>  <br><br>"
+                f"<span style='color:{T.BLUE};font-weight:700'>Reversal</span><br>"
+                f"<span style='color:{T.MUTED}'>Bet 365 and Pinnacle moved the price in opposite directions</span>",
+                unsafe_allow_html=True)
             st.markdown(f"<div style='color:{T.BLUE_LIGHT};font-style:italic;"
-                        f"margin-top:8px'>35 features in 5 families — no team or "
-                        f"player data, by design.</div>", unsafe_allow_html=True)
+                f"margin-top:8px'>35 features in 5 families</div>", unsafe_allow_html=True)
 
     # ---- 2. Anomaly score distribution, full width -------------------------- #
     st.write("")
@@ -56,17 +61,6 @@ def render(df):
                "Turkey (2.0%) — it's comparing every league to the same global bar. "
                "Unusual is not an accusation.")
 
-    st.write("")
-    with C.card("Per-league calibration fixes over-flagging"):
-        st.plotly_chart(charts.flag_rate_by_league(FLAG_RATE_UNIVERSAL, FLAG_RATE_TIER),
-                        width="stretch", config={"displayModeBar": False},
-                        key="flag_rate_chart_2")
-        C.note("Re-scoring each league against its own history (z-scored per "
-               "league-season) pulls every flag rate toward ~5% — Greece drops from "
-               "10.6% to 5.5%, Turkey rises from 2.0% to 4.3%. Same idea as "
-               "per-merchant calibration in fraud detection: a screen should ask "
-               "\u201cis this unusual for this market\u201d, not \u201cis this unusual "
-               "overall\u201d.")
 
     # ---- 4. SHAP, full width ------------------------------------------------ #
     st.write("")

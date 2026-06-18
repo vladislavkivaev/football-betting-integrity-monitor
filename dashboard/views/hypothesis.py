@@ -41,8 +41,8 @@ def render(df):
 
     st.write("")
     st.markdown(
-        "<div class='note'>Click a hypothesis below to see why, in plain "
-        "terms</div>", unsafe_allow_html=True)
+        "<div class='note'>Click a hypothesis below to see why</div>", unsafe_allow_html=True
+        )
     st.write("")
 
     row1_l, row1_r = st.columns(2)
@@ -58,7 +58,7 @@ def render(df):
                    "league-specific, not tier-level — so H1 isn't supported as "
                    "originally framed.")
     with row1_r:
-        with st.expander("H2 — Draws mispriced (Greece under, EPL correct)",
+        with st.expander("H2 — Draws mispriced",
                          expanded=False):
             st.plotly_chart(charts.draw_mispricing(), width="stretch",
                             config={"displayModeBar": False})
@@ -72,7 +72,7 @@ def render(df):
 
     row2_l, row2_r = st.columns(2)
     with row2_l:
-        with st.expander("H3 — Anomalies detectable; league-aware tuning "
+        with st.expander("H3 — Anomalies detectable, league-aware tuning "
                          "rebalances flags", expanded=False):
             st.plotly_chart(charts.h3_winbar(), width="stretch",
                             config={"displayModeBar": False}, key="h3_expander_chart")
@@ -93,32 +93,6 @@ def render(df):
                    "three leagues stay essentially flat throughout. Disagreement "
                    "doesn't spike at season's end anywhere in this data, so H4 "
                    "is rejected as framed.")
-
-    st.write("")
-    a, b = st.columns([1, 1.1])
-    with a:
-        with C.card("H3 — the one clean win (Greece flag rate)"):
-            st.plotly_chart(charts.h3_winbar(), width="stretch",
-                            config={"displayModeBar": False}, key="h3_card_chart")
-            C.note("Grading each league against itself (per-league-season z-scoring) "
-                   "roughly **halves** Greece's flag rate — 10.6% → 5.5% — pulling "
-                   "every league back toward the 5% baseline. That's the "
-                   "pre-registered criterion met.")
-    with b:
-        with C.card("Why two nulls still matter"):
-            st.markdown(
-                "Pre-registering H1–H4 *before* testing means the results can't be "
-                "cherry-picked. H1 and H4 failing is **evidence the method is "
-                "honest** — not tuned after the fact to tell a tidy story.\n\n"
-                "**H1** turned out to be a *league*-level effect, not a tier one: "
-                "Turkey is the overround outlier, Greece the spread outlier — they "
-                "don't move together as a 'mid-tier block'.\n\n"
-                "**H4** was rejected outright: disagreement is *lowest* at season's "
-                "end, not highest.")
-            st.markdown(f"<div style='color:{T.BLUE_LIGHT};font-style:italic'>"
-                        f"H4′ (exploratory): Greece is the noisiest market in every "
-                        f"quarter — a persistent league effect, not a seasonal "
-                        f"one.</div>", unsafe_allow_html=True)
 
     C.soft_divider()
     with st.expander("Effect sizes & test details (the honest reading)"):
