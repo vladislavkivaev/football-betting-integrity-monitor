@@ -22,7 +22,7 @@ def render(df):
                 "the away price drifted hard late</div>", unsafe_allow_html=True)
             st.plotly_chart(charts.drift_example(), width="stretch",
                             config={"displayModeBar": False})
-            C.note("The away odds jumped 2.85 → 3.60 — a big, late move. On its own "
+            C.note("The away odds jumped 2.85 → 3.60 — a big move. On its own "
                    "that's nothing, but combined with a wide book disagreement, the model "
                    "treats it as a red flag worth a look.")
     with top_r:
@@ -31,11 +31,11 @@ def render(df):
                 f"<span style='color:{T.BLUE};font-weight:700'>Drift</span><br>"
                 f"<span style='color:{T.MUTED}'>how far open → close odds moved</span>  <br><br>"
                 f"<span style='color:{T.BLUE};font-weight:700'>Spread</span><br>"
-                f"<span style='color:{T.MUTED}'>disagreement between bookmakers</span>  <br><br>"
+                f"<span style='color:{T.MUTED}'>disagreement between bookmakers (max vs avg odds)</span>  <br><br>"
                 f"<span style='color:{T.BLUE};font-weight:700'>Margin deviation</span><br>"
-                f"<span style='color:{T.MUTED}'>the book margin vs typical margin</span>  <br><br>"
+                f"<span style='color:{T.MUTED}'>the book margin for a match vs typical margin</span>  <br><br>"
                 f"<span style='color:{T.BLUE};font-weight:700'>Public–sharp gap</span><br>"
-                f"<span style='color:{T.MUTED}'>Bet365 vs Pinnacle variance</span>  <br><br>"
+                f"<span style='color:{T.MUTED}'>Bet365 vs Pinnacle odds variance</span>  <br><br>"
                 f"<span style='color:{T.BLUE};font-weight:700'>Reversal</span><br>"
                 f"<span style='color:{T.MUTED}'>Bet 365 and Pinnacle moved the price in opposite directions</span>",
                 unsafe_allow_html=True)
@@ -90,8 +90,8 @@ def render(df):
                 "Greece to 5.5% and nudges Turkey to 4.3% — every league near "
                 "baseline.")
         st.markdown(
-            "<div class='note'>They agree on 328 matches but each catch 118 the other "
-            "misses — different lenses on the same data, which is exactly the point "
+            "<div class='note'>Both models agree on 328 matches but each catch 118 the other "
+            "misses. It's different lenses on the same data, which is exactly the point "
             "of the comparison.</div>", unsafe_allow_html=True)
 
     # ---- 6. No ground-truth labels ------------------------------------------ #

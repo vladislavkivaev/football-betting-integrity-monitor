@@ -227,10 +227,12 @@ def render(df):
     st.markdown(
         f"<div class='card'><h3>How to read this · scope &amp; limitations</h3>"
         f"<div class='muted'>"
-        f"• A flag means a match's odds behave unlike the dataset as a whole — it "
+        f"• Pinnacle odds are unavailable for the 2025/26 season from January onwards, " 
+        f"affected matches are excluded from public-sharp gap feature calculations.<br>"
+        f"• A flag means a match's odds behave unlike the dataset as a whole. It "
         f"is a screening signal, not proof of anything.<br>"
         f"• There are no ground-truth fixing labels, so this reports differential "
-        f"flagging rates, never false-positive rates.<br>"
+        f"flagging rates not false-positive rates.<br>"
         f"• \u201cUnusual \u2260 rigged.\u201d The honest output is \u201chere is "
         f"where a human should look\u201d — the same way real integrity monitors "
         f"operate.</div></div>", unsafe_allow_html=True)

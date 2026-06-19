@@ -21,7 +21,7 @@ def render(df):
                 "this dataset uses; **US** odds are the American style; the **implied "
                 "probability** is just `1 ÷ decimal odds`.")
             st.table({
-                "Outcome": ["Mexico (home)", "Draw", "South Africa (away)"],
+                "Outcome": ["🇲🇽 Mexico (home)", "🤝 Draw", "🇿🇦 South Africa (away)"],
                 "Decimal": ["1.48", "4.33", "6.50"],
                 "US": ["−208", "+333", "+550"],
                 "Implied %": ["67.6%", "23.1%", "15.4%"],
